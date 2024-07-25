@@ -15,6 +15,8 @@ object NetworkHelper {
     const val SERVER_ERROR_MESSAGE = "Unknown server error, please try again later"
     const val CLIENT_ERROR_MESSAGE = "Something went wrong!"
 
+    const val GET_PRODUCT_BUNDLE = "productBundles"
+
     inline fun <reified T> convertErrorBody(t: HttpException): T? {
         return try {
             t.response()?.errorBody()?.let {
