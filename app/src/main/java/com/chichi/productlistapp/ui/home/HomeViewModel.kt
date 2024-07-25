@@ -11,8 +11,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -20,46 +22,54 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     private val repository: RepositoryImpl
 ) : ViewModel() {
-    private val _products: MutableStateFlow<BaseWrapper> = MutableStateFlow(BaseWrapper.Empty)
-    val products = _products.asStateFlow()
-
-    private val _errorFlow = MutableSharedFlow<String>()
-    val errorFlow = _errorFlow.asSharedFlow()
-
-    private val _loadingFlow = MutableStateFlow(false)
-    val loadingFlow = _loadingFlow.asStateFlow()
+    private val _state = MutableStateFlow(ProductListState())
+    val state: StateFlow<ProductListState> = _state.asStateFlow()
 
     private var job: Job? = null
 
+    init {
+        getProducts()
+    }
 
-    fun getProducts() {
-        Log.d("PTAG", "getProducts: here")
-        _products.value = BaseWrapper.Loading
-        _loadingFlow.value = true
+    private fun getProducts() {
+
+        _state.update { it.copy(isLoading = true) }
 
         job?.cancel()
         job = viewModelScope.launch {
-
-            try {
-                when(val res = repository.getProducts()){
-                    is BaseWrapper.Success<*> ->{
-                        Log.d("PTAG", "getProducts succ: here")
-                        _loadingFlow.value = false
-                        val result = res.get<List<Product>>()
-                        _products.value = BaseWrapper.Success(result)
+            when (val res = repository.getProducts()) {
+                is BaseWrapper.Success<*> -> {
+                    val result = res.get<List<Product>>()
+                    _state.update {
+                        it.copy(
+                            products = result ?: emptyList(), isLoading = false
+                        )
                     }
-                    is BaseWrapper.Error -> {
-                        _loadingFlow.value = false
-                        _errorFlow.emit(res.message)
-                    }
-                    else -> {}
                 }
-            }catch (e: Exception){
-                Log.d("PTAG", "error: $e")
+
+                is BaseWrapper.Error -> {
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = res.message,
+                        )
+                    }
+                }
+
+                else -> {
+                    _state.update { it.copy(isLoading = false) }
+                }
             }
-
-
-
         }
     }
 }
+
+
+data class ProductListState(
+    val products: List<Product> = emptyList(),
+    val isLoading: Boolean = false,
+    val error: String? = null,
+    val retry: (() -> Unit)? = null //todo: Add retry flow, when an error occurs
+)
+
+
