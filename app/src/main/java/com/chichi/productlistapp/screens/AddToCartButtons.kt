@@ -2,42 +2,75 @@ package com.chichi.productlistapp.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import com.chichi.productlistapp.R
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.InternalComposeApi
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.chichi.productlistapp.R
+import com.chichi.productlistapp.model.Product
+import com.chichi.productlistapp.ui.home.CartViewModel
+import com.chichi.productlistapp.util.CartActions.onMinusClicked
+import com.chichi.productlistapp.util.CartActions.onPlusClicked
+import com.chichi.productlistapp.util.CartActions.onQuantityChanged
+import com.chichi.productlistapp.util.CartActions.shouldExpand
 
 @Composable
 fun AddToCartButtons(
-    onMinusClick: () -> Unit, onPlusClick: () -> Unit, isEnabled: Boolean = true
+    bundleList: List<Product>,
+    bundle: Product,
+    isEnabled: Boolean = true,
+    cartViewModel: CartViewModel = hiltViewModel()
+
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
-    var quantityTextValue by rememberSaveable { mutableStateOf("1") }
+    var quantityTextValue by remember { mutableStateOf(bundle.selectedQty.toString()) }
+    var showError by remember { mutableStateOf(false) }
+    var isExpanded by remember { mutableStateOf(bundle.selectedQty > 0) }
+
+    LaunchedEffect(quantityTextValue) {
+        isExpanded = shouldExpand(quantityTextValue)
+    }
+
+
 
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp)
+            .padding(4.dp)
             .height(48.dp)
-            .clickable(onClick = { isExpanded = !isExpanded })
+            .clickable(onClick = {
+                isExpanded = !isExpanded
+                if (isExpanded) {
+                    bundle.selectedQty += 1
+                    quantityTextValue = bundle.selectedQty.toString()
+
+                }
+            })
             .background(Color.Gray)
     ) {
         Box(
@@ -48,62 +81,85 @@ fun AddToCartButtons(
                     shape = RoundedCornerShape(4.dp), color = Color.Green
                 )
                 .align(Alignment.Center)
-
         ) {
             if (isExpanded) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                    verticalAlignment = Alignment.CenterVertically,
-
+                Column {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                    IconButton(
-                        onClick = onMinusClick,
-                        enabled = isEnabled,
-                        modifier = Modifier
-                            .background(Color.Blue, shape = RoundedCornerShape(4.dp))
-                            .weight(1f)
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_minus),
-                            contentDescription = "Minus Icon",
-                            tint = Color.White
+                        // Minus Icon
+                        IconButton(
+                            onClick = {
+                                onMinusClicked(bundle,
+                                    { quantityTextValue = it },
+                                    { showError = it })
+                            },
+                            enabled = isEnabled,
+                            modifier = Modifier
+                                .background(
+                                    Color.Blue, shape = RoundedCornerShape(4.dp)
+                                )
+                                .weight(1f)
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_minus),
+                                contentDescription = "Minus Icon",
+                                tint = Color.White
+                            )
+                        }
+
+                        BasicTextField(
+                            maxLines = 1,
+                            value = quantityTextValue,
+                            onValueChange = { newValue ->
+                                onQuantityChanged(
+                                    newValue,
+                                    bundle,
+                                    { quantityTextValue = it },
+                                    { showError = it }
+                                )
+
+                            },
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                            textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
+                            singleLine = true,
+                            enabled = !showError,
+                            modifier = Modifier
+                                .background(
+                                    shape = RoundedCornerShape(4.dp),
+                                    color = if (showError) Color.Gray.copy(alpha = 0.5f) else Color.Green.copy(
+                                        alpha = 0.8f
+                                    )
+                                )
+
+                                .padding(8.dp)
+                                .weight(1f)
                         )
-                    }
 
-                    BasicTextField(
-                        maxLines = 1,
-                        value = quantityTextValue,
-                        onValueChange = {
-                            quantityTextValue = it
-                        },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
-                        singleLine = true,
-                        modifier = Modifier.background(
-                            shape = RoundedCornerShape(4.dp), color = Color.Green
-                        )
-
-                    )
-
-
-                    IconButton(
-                        onClick = onPlusClick,
-                        enabled = isEnabled,
-                        modifier = Modifier
-                            .weight(1f)
-                            .background(Color.Blue, shape = RoundedCornerShape(4.dp))
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_add_dark_24),
-                            contentDescription = "Add Icon",
-                            tint = Color.White
-                        )
+                        // Plus Icon
+                        IconButton(
+                            onClick = {
+                                onPlusClicked(bundle,
+                                    { quantityTextValue = it },
+                                    { showError = it })
+                            },
+                            enabled = isEnabled && !showError,
+                            modifier = Modifier
+                                .weight(1f)
+                                .background(Color.Blue, shape = RoundedCornerShape(4.dp))
+                        ) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_add_dark_24),
+                                contentDescription = "Add Icon",
+                                tint = Color.White
+                            )
+                        }
                     }
                 }
             } else {
                 Text(
-
                     text = "Add to Cart",
                     color = Color.Black,
                     textAlign = TextAlign.Center,
@@ -113,9 +169,12 @@ fun AddToCartButtons(
                 )
             }
         }
-
     }
 }
+
+
+
+
 
 //todo: add element, shared transition
 

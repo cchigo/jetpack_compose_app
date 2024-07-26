@@ -26,7 +26,7 @@ fun HomeScreen(
 
     Scaffold(topBar = {
         HomeTopBar(onIconClicked = {
-
+                                   //todo: nav to cart
         }, itemCount = 5)
 
     }, content = { paddingValues ->

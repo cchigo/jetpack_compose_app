@@ -17,13 +17,13 @@ data class Product(
     val imageLocation: String? = null,
     val name: String? = null,
     val price: Int? = null,
-    val quantity: Int? = null,
-    val status: String? = null
+    val quantity: Int? = 0,
+    val status: String? = null,
+    var selectedQty: Int = 0,
 
 ) : Parcelable {
 
-    var available: Boolean = true
-    var selectedQty: Int = 0
+
 
 
     fun increaseSelectedQuantity() {}
@@ -33,14 +33,32 @@ data class Product(
     }
 
     fun decreaseQuantity() {
-//        if (selectedQty > quantity) selectedQty--
-//        else selectedQty = 0
+        if (selectedQty > quantity!!) selectedQty--
+        else selectedQty = 0
     }
 
     fun updateQuantity(qty: Int) {
-
+        selectedQty = if (qty > quantity!!)
+           quantity
+        else
+            qty
     }
+    val canIncreaseSelectedQty: Boolean
+        get() = when {
+            selectedQty < quantity!! -> true
+            else -> false
+        }
 
+
+
+    val canDecreaseSelectedQty: Boolean
+        get() = selectedQty > 1
+
+
+//    var isExpanded by remember { mutableStateOf(bundle.selectedQty > 0) }
+//    var quantityTextValue by rememberSaveable { mutableStateOf(bundle.selectedQty) }
+//    var isMinusButtonEnabled by remember { mutableStateOf(bundle.selectedQty > 0) }
+//    var isPlusButtonEnabled by remember { mutableStateOf(bundle.canIncreaseSelectedQty && ContentCaptureManager.isEnabled) }
 
 }
 

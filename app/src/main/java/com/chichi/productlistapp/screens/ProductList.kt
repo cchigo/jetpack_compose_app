@@ -15,14 +15,15 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import com.chichi.productlistapp.ui.home.ProductListState
 
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @ExperimentalCoilApi
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductBundleListScreen(
     screenState: ProductListState
@@ -35,6 +36,8 @@ fun ProductBundleListScreen(
             ErrorScreen(error = screenState.error, onRetry = screenState.retry)
         }
         else -> {
+
+
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(all = 12.dp),
@@ -44,7 +47,8 @@ fun ProductBundleListScreen(
                     items = screenState.products,
                     key = { product -> product.id }
                 ) { singleProduct ->
-                    SingleProductView(singleProduct)
+
+                    SingleProductView(bundleList = screenState.products, bundle = singleProduct)
                 }
             }
         }
