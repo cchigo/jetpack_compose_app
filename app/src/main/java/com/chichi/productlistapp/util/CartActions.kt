@@ -28,7 +28,7 @@ object CartActions {
         bundle: Product,
         setQuantityTextValue: (String) -> Unit,
         setShowError: (Boolean) -> Unit
-    ) {
+    ): Product {
         if (bundle.selectedQty < bundle.quantity!!) {
             bundle.selectedQty += 1
             setQuantityTextValue(bundle.selectedQty.toString())
@@ -36,6 +36,7 @@ object CartActions {
         } else {
             setShowError(true)
         }
+        return bundle
     }
 
     fun onMinusClicked(
@@ -56,4 +57,4 @@ object CartActions {
     }
 }
 
-enum class ClickActions { REMOVE, UPDATE, NONE }
+enum class ClickActions { REMOVE, UPDATE, NONE, SET }

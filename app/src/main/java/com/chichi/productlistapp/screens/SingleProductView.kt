@@ -31,7 +31,7 @@ import com.chichi.productlistapp.model.Product
 @ExperimentalMaterial3Api
 @Composable
 fun SingleProductView(
-    bundleList: List<Product>, bundle: Product
+    bundleList: List<Product>, bundle: Product,
 ) {
     Card(
         modifier = Modifier

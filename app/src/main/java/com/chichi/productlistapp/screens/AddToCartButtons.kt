@@ -1,5 +1,6 @@
 package com.chichi.productlistapp.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -12,13 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.InternalComposeApi
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +38,7 @@ import com.chichi.productlistapp.util.CartActions.onMinusClicked
 import com.chichi.productlistapp.util.CartActions.onPlusClicked
 import com.chichi.productlistapp.util.CartActions.onQuantityChanged
 import com.chichi.productlistapp.util.CartActions.shouldExpand
+import com.chichi.productlistapp.util.ClickActions
 
 @Composable
 fun AddToCartButtons(
@@ -57,7 +57,6 @@ fun AddToCartButtons(
     }
 
 
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -68,6 +67,7 @@ fun AddToCartButtons(
                 if (isExpanded) {
                     bundle.selectedQty += 1
                     quantityTextValue = bundle.selectedQty.toString()
+                    cartViewModel.setProduct(clickActions = ClickActions.SET, product = bundle)
 
                 }
             })
@@ -95,6 +95,9 @@ fun AddToCartButtons(
                                 onMinusClicked(bundle,
                                     { quantityTextValue = it },
                                     { showError = it })
+
+                                cartViewModel.setProduct(clickActions = ClickActions.REMOVE, product = bundle)
+
                             },
                             enabled = isEnabled,
                             modifier = Modifier
@@ -102,6 +105,8 @@ fun AddToCartButtons(
                                     Color.Blue, shape = RoundedCornerShape(4.dp)
                                 )
                                 .weight(1f)
+
+
                         ) {
                             Icon(
                                 painter = painterResource(id = R.drawable.ic_minus),
@@ -141,9 +146,14 @@ fun AddToCartButtons(
                         // Plus Icon
                         IconButton(
                             onClick = {
-                                onPlusClicked(bundle,
+                                val pluss =onPlusClicked(bundle,
                                     { quantityTextValue = it },
                                     { showError = it })
+
+                                cartViewModel.setProduct(clickActions = ClickActions.UPDATE, product = bundle)
+
+                                Log.d("PLUS_TAG", "AddToCartButtons: $pluss")
+                                //cartViewModel.addProductToCart(clickActions = ClickActions.UPDATE, product = bundle)
                             },
                             enabled = isEnabled && !showError,
                             modifier = Modifier
@@ -171,8 +181,6 @@ fun AddToCartButtons(
         }
     }
 }
-
-
 
 
 

@@ -12,6 +12,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import coil.annotation.ExperimentalCoilApi
 import com.chichi.productlistapp.screens.ProductBundleListScreen
+import com.chichi.productlistapp.ui.home.CartViewModel
 import com.chichi.productlistapp.ui.home.HomeViewModel
 
 
@@ -19,10 +20,12 @@ import com.chichi.productlistapp.ui.home.HomeViewModel
 @ExperimentalCoilApi
 @Composable
 fun HomeScreen(
-    navController: NavHostController, homeViewModel: HomeViewModel = hiltViewModel()
+    navController: NavHostController, homeViewModel: HomeViewModel = hiltViewModel(), cartViewModel: CartViewModel = hiltViewModel()
 ) {
 
     val state by homeViewModel.state.collectAsState()
+
+
 
     Scaffold(topBar = {
         HomeTopBar(onIconClicked = {

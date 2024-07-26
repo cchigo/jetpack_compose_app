@@ -18,14 +18,14 @@ fun HomeTopBar(
             text = "Products", color = MaterialTheme.colorScheme.primary
         )
     },
-
         actions = {
-            BadgeItem()
+
+            BadgeItem(itemCount)
         })
 }
 
 @Composable
 @Preview
 fun HomeTopBarPreview() {
-    HomeTopBar(itemCount = 5) {}
+   // HomeTopBar(itemCount = 200) {}
 }

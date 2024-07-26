@@ -1,9 +1,11 @@
 package com.chichi.productlistapp.ui.home
 
 import android.util.Log
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import com.chichi.productlistapp.ClickActions
 import com.chichi.productlistapp.model.Product
+import com.chichi.productlistapp.util.CartManager
+import com.chichi.productlistapp.util.ClickActions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,43 +14,41 @@ import javax.inject.Inject
 
 @HiltViewModel
 class CartViewModel @Inject constructor(
-):ViewModel(){
+    private val cartManager: CartManager
+) : ViewModel() {
 
 
-
-    private val _product = MutableStateFlow<Product?>(null)
-    val product: StateFlow<Product?> get() = _product
-
-    private val _products = MutableStateFlow<List<Product>>(listOf())
-    val products: StateFlow<List<Product>> get() = _products
-
-    private val updatedProducts = MutableStateFlow<List<Product>>(listOf())
+    private val _cartProducts = MutableStateFlow<List<Product>>(emptyList())
+    val cartProducts: StateFlow<List<Product>> get() = _cartProducts
 
 
-    fun addProduct(cartAction:ClickActions, product: Product){
-        Log.d("PTAG", "addProduct: $product")
-        Log.d("PTAG2", "addProduct: ${product.selectedQty}")
-        when(cartAction){
+    var cartDetails = mutableStateListOf<Product>() // reacts to changes in cart actions
+
+
+    fun setProduct(clickActions: ClickActions, product: Product) {
+        when (clickActions) {
             ClickActions.UPDATE -> {
-                // Add the product to the updatedProducts list
-                updatedProducts.value = updatedProducts.value.toMutableList().apply {
-                    add(product)
-                }
+                cartDetails = cartManager.addProductToCart(product)
+            }
+            ClickActions.SET -> {
+                cartDetails = cartManager.insertProduct(product)
             }
             ClickActions.REMOVE -> {
-                // Remove the product from the updatedProducts list
-                updatedProducts.value = updatedProducts.value.toMutableList().apply {
-                    remove(product)
-                }
-            }
-            else -> {
-                // Handle any other actions if needed
-            }
-        }
+                cartDetails = cartManager.removeProduct(product)
 
+            }
+
+            else -> {}
+
+        }
     }
 
-    fun decreaseProduct(){
 
+    fun initializeCart(products: List<Product>) {
+
+        products.forEach {
+            Log.d("LIST_TAG", "initializeCart: ${it.id} >> ${it.selectedQty}")
+        }
+        _cartProducts.value = products
     }
 }

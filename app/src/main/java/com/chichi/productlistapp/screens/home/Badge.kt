@@ -7,7 +7,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Badge
 import androidx.compose.material3.BadgedBox
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -23,8 +22,8 @@ import androidx.compose.ui.unit.dp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BadgeItem() {
-    var itemCount by remember { mutableStateOf(4) }
+fun BadgeItem(count: Int) {
+    var itemCount by remember { mutableStateOf(count) }
 
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp)
@@ -54,5 +53,5 @@ fun BadgeItem() {
 @Composable
 @Preview
 fun BarPreview() {
-    BadgeItem()
+    BadgeItem(6)
 }

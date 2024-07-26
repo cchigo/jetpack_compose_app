@@ -1,5 +1,6 @@
 package com.chichi.productlistapp.screens
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,14 +20,18 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
+import com.chichi.productlistapp.ui.home.CartViewModel
 import com.chichi.productlistapp.ui.home.ProductListState
 
 @OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @ExperimentalCoilApi
 @Composable
 fun ProductBundleListScreen(
-    screenState: ProductListState
+    screenState: ProductListState,
+    cartViewModel: CartViewModel = hiltViewModel()
+
 ) {
     when {
         screenState.isLoading -> {
@@ -37,7 +42,7 @@ fun ProductBundleListScreen(
         }
         else -> {
 
-
+            cartViewModel.initializeCart(screenState.products)
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = PaddingValues(all = 12.dp),

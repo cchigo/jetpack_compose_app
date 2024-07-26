@@ -24,42 +24,12 @@ data class Product(
 ) : Parcelable {
 
 
-
-
-    fun increaseSelectedQuantity() {}
-
-    fun resetSelectedQuantity() {
-        selectedQty = 0
-    }
-
-    fun decreaseQuantity() {
-        if (selectedQty > quantity!!) selectedQty--
-        else selectedQty = 0
-    }
-
     fun updateQuantity(qty: Int) {
         selectedQty = if (qty > quantity!!)
            quantity
         else
             qty
     }
-    val canIncreaseSelectedQty: Boolean
-        get() = when {
-            selectedQty < quantity!! -> true
-            else -> false
-        }
-
-
-
-    val canDecreaseSelectedQty: Boolean
-        get() = selectedQty > 1
-
-
-//    var isExpanded by remember { mutableStateOf(bundle.selectedQty > 0) }
-//    var quantityTextValue by rememberSaveable { mutableStateOf(bundle.selectedQty) }
-//    var isMinusButtonEnabled by remember { mutableStateOf(bundle.selectedQty > 0) }
-//    var isPlusButtonEnabled by remember { mutableStateOf(bundle.canIncreaseSelectedQty && ContentCaptureManager.isEnabled) }
 
 }
 
-//todo: make nullable
