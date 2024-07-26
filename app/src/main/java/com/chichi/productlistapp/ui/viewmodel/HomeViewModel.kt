@@ -1,6 +1,5 @@
-package com.chichi.productlistapp.ui.home
+package com.chichi.productlistapp.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chichi.productlistapp.data.remote.BaseWrapper
@@ -9,10 +8,8 @@ import com.chichi.productlistapp.data.remote.repository.RepositoryImpl
 import com.chichi.productlistapp.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch

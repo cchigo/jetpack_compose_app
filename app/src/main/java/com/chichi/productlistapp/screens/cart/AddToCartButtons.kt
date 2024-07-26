@@ -1,4 +1,4 @@
-package com.chichi.productlistapp.screens
+package com.chichi.productlistapp.screens.cart
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -30,10 +30,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.chichi.productlistapp.R
 import com.chichi.productlistapp.model.Product
-import com.chichi.productlistapp.ui.home.CartViewModel
+import com.chichi.productlistapp.ui.viewmodel.CartViewModel
 import com.chichi.productlistapp.util.CartActions.onMinusClicked
 import com.chichi.productlistapp.util.CartActions.onPlusClicked
 import com.chichi.productlistapp.util.CartActions.onQuantityChanged
@@ -45,7 +44,7 @@ fun AddToCartButtons(
     bundleList: List<Product>,
     bundle: Product,
     isEnabled: Boolean = true,
-    cartViewModel: CartViewModel = hiltViewModel()
+    cartViewModel: CartViewModel
 
 ) {
     var quantityTextValue by remember { mutableStateOf(bundle.selectedQty.toString()) }
@@ -60,7 +59,6 @@ fun AddToCartButtons(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(4.dp)
             .height(48.dp)
             .clickable(onClick = {
                 isExpanded = !isExpanded
@@ -78,7 +76,7 @@ fun AddToCartButtons(
                 .height(48.dp)
                 .fillMaxWidth()
                 .background(
-                    shape = RoundedCornerShape(4.dp), color = Color.Green
+                    shape = RoundedCornerShape(4.dp), color = Color.White
                 )
                 .align(Alignment.Center)
         ) {
@@ -134,7 +132,7 @@ fun AddToCartButtons(
                             modifier = Modifier
                                 .background(
                                     shape = RoundedCornerShape(4.dp),
-                                    color = if (showError) Color.Gray.copy(alpha = 0.5f) else Color.Green.copy(
+                                    color = if (showError) Color.Gray.copy(alpha = 0.5f) else Color.White.copy(
                                         alpha = 0.8f
                                     )
                                 )
@@ -176,6 +174,8 @@ fun AddToCartButtons(
                     modifier = Modifier
                         .fillMaxWidth()
                         .align(Alignment.Center)
+                        .background(Color.Yellow)
+                        .padding(8.dp)
                 )
             }
         }

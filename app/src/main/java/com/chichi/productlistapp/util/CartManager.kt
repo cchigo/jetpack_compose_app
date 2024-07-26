@@ -2,7 +2,6 @@ package com.chichi.productlistapp.util
 
 import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import com.chichi.productlistapp.model.Product
 import javax.inject.Inject
 
@@ -11,22 +10,20 @@ class CartManager @Inject constructor() {
     private val cartActions = mutableStateListOf<Product>()
 
     /** Adds product to cart, if it exist, updates `selectedQuantity`**/
-    fun addProductToCart(product: Product): SnapshotStateList<Product> {
+    fun addProductToCart(product: Product): Pair<Double, Int> {
         val index = cartActions.indexOfFirst { it.id == product.id }
         if (index != -1) {
             cartActions[index] = cartActions[index].copy(selectedQty = product.selectedQty)
         } else {
             cartActions.add(product.copy(selectedQty = product.selectedQty))
         }
-        computeTotalAmount()
-        return cartActions
+        return computeTotalAmount()
     }
 
     /** Inserts product to cart, and, updates `selectedQuantity`**/
-    fun insertProduct(product: Product): SnapshotStateList<Product> {
+    fun insertProduct(product: Product): Pair<Double, Int> {
         cartActions.add(product.copy(selectedQty = product.selectedQty))
-        computeTotalAmount()
-        return cartActions
+        return computeTotalAmount()
     }
 
     /** Removes product from cart,
@@ -34,7 +31,7 @@ class CartManager @Inject constructor() {
      * else , removes it from the list
      * **/
 
-    fun removeProduct(product: Product): SnapshotStateList<Product> {
+    fun removeProduct(product: Product): Pair<Double, Int> {
         val index = cartActions.indexOfFirst { it.id == product.id }
         if (index != -1) {
             val currentProduct = cartActions[index]
@@ -45,11 +42,10 @@ class CartManager @Inject constructor() {
                 cartActions.removeAt(index)
             }
         }
-        computeTotalAmount()
-        return cartActions
+        return computeTotalAmount()
     }
 
-    /** Calculate total amaount and total selected quantity
+    /** Calculate total amount and total selected quantity
      * **/
     private fun computeTotalAmount(): Pair<Double, Int> {
         var totalAmount = 0.0

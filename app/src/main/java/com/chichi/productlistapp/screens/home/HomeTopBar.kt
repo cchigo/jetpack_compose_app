@@ -1,31 +1,62 @@
 package com.chichi.productlistapp.screens.home
 
+import android.util.Log
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopBar(
-    itemCount: Int, onIconClicked: () -> Unit // todo: display cart
-) {
-    TopAppBar(title = {
-        Text(
-            text = "Products", color = MaterialTheme.colorScheme.primary
-        )
-    },
-        actions = {
 
-            BadgeItem(itemCount)
+    itemCount: Pair<Double, Int>,
+    showLeftButton: Boolean = false,
+    leftButton: (() -> Unit)? = null
+) {
+
+    Log.d("ITEM_TAG", "HomeTopBar: $itemCount")
+    TopAppBar(
+        title = {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                toggleLeftIcon(showLeftButton, leftButton)
+                Spacer(modifier = Modifier.weight(1f))
+                Text("Bundle List")
+                Spacer(modifier = Modifier.weight(1f))
+                BadgeItem(count = itemCount.second)
+            }
+        },
+        actions = {
         })
 }
 
 @Composable
 @Preview
 fun HomeTopBarPreview() {
-   // HomeTopBar(itemCount = 200) {}
+    // HomeTopBar(itemCount = 200) {}
+}
+
+@Composable
+fun toggleLeftIcon(showLeftButton: Boolean, leftButton: (() -> Unit)?) {
+    if (showLeftButton) {
+        if (leftButton != null) {
+            IconButton(onClick = leftButton) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Menu")
+            }
+           
+        }
+
+    }
 }

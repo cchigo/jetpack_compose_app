@@ -1,7 +1,8 @@
-package com.chichi.productlistapp.screens
+package com.chichi.productlistapp.screens.cart
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,24 +26,42 @@ import androidx.compose.ui.unit.dp
 import androidx.core.R
 import coil.compose.rememberImagePainter
 import com.chichi.productlistapp.model.Product
+import com.chichi.productlistapp.ui.viewmodel.CartViewModel
 
 
 @ExperimentalComposeUiApi
 @ExperimentalMaterial3Api
 @Composable
 fun SingleProductView(
-    bundleList: List<Product>, bundle: Product,
+    bundleList: List<Product>? = null,
+    bundle: Product,
+    onProductClick: ((Product) -> Unit)? = null,
+    cartViewModel: CartViewModel
 ) {
     Card(
         modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 10.dp)
+            .padding(horizontal = 4.dp, vertical = 4.dp)
             .wrapContentHeight(),
+
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
+//        Logo
+//        Name
+//        Price
+//        Description
+//        Add to Cart button
+//                Buy Now button
+
+
         Column(
             Modifier
-                .background(Color.Green)
+                .background(Color.White)
                 .wrapContentHeight()
+                .clickable {
+                    if (onProductClick != null) {
+                        onProductClick(bundle)
+                    }
+                }
         ) {
             val painter = rememberImagePainter(data = bundle.imageLocation,
 
@@ -53,14 +72,14 @@ fun SingleProductView(
                 })
             Image(
                 painter = painter,
-                contentDescription = "Carmen Sandiego",
-                modifier = Modifier.aspectRatio(16f / 9f),
-                contentScale = ContentScale.Crop
+                contentDescription = "Image",
+                modifier = Modifier.aspectRatio(12f / 6f),
+                contentScale = ContentScale.Fit
             )
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = bundle.name ?: "",
-                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontSize = MaterialTheme.typography.titleSmall.fontSize,
                 fontWeight = FontWeight.Normal,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -68,7 +87,7 @@ fun SingleProductView(
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = bundle.description ?: "",
-                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontSize = MaterialTheme.typography.titleSmall.fontSize,
                 fontWeight = FontWeight.Normal,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
@@ -88,7 +107,9 @@ fun SingleProductView(
                     .fillMaxWidth()
                     .padding(2.dp)
             ) {
-                AddToCartButtons(bundleList = bundleList , bundle = bundle)
+                if (bundleList != null) {
+                    AddToCartButtons(bundleList = bundleList , bundle = bundle, cartViewModel = cartViewModel )
+                }
             }
 
         }
@@ -97,3 +118,7 @@ fun SingleProductView(
     }
 
 }
+
+
+
+

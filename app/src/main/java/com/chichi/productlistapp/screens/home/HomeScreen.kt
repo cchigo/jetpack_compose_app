@@ -9,32 +9,33 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import coil.annotation.ExperimentalCoilApi
-import com.chichi.productlistapp.screens.ProductBundleListScreen
-import com.chichi.productlistapp.ui.home.CartViewModel
-import com.chichi.productlistapp.ui.home.HomeViewModel
+import com.chichi.productlistapp.model.Product
+import com.chichi.productlistapp.ui.viewmodel.CartViewModel
+import com.chichi.productlistapp.ui.viewmodel.HomeViewModel
 
 
 @ExperimentalMaterial3Api
 @ExperimentalCoilApi
 @Composable
 fun HomeScreen(
-    navController: NavHostController, homeViewModel: HomeViewModel = hiltViewModel(), cartViewModel: CartViewModel = hiltViewModel()
+    onNavigateForward: ((Product?) -> Unit)? = null,
+    homeViewModel: HomeViewModel = hiltViewModel(),
+    cartViewModel: CartViewModel
 ) {
 
     val state by homeViewModel.state.collectAsState()
-
+    val cartState by cartViewModel.total.collectAsState()
 
 
     Scaffold(topBar = {
-        HomeTopBar(onIconClicked = {
-                                   //todo: nav to cart
-        }, itemCount = 5)
+        HomeTopBar( itemCount = cartState)
 
     }, content = { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
-            ProductBundleListScreen(screenState = state)
+            ProductBundleListScreen(screenState = state, onNavigateForward = onNavigateForward, cartViewModel = cartViewModel)
+
         }
-    })
+    }
+    )
 }

@@ -5,8 +5,10 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.chichi.productlistapp.util.Constants.PRODUCT_DATABASE
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
 @Parcelize
+@Serializable
 @Entity(tableName = PRODUCT_DATABASE)
 data class Product(
     @PrimaryKey(autoGenerate = false)
