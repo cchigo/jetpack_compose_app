@@ -10,13 +10,13 @@ import com.chichi.productlistapp.model.Product
 @Dao
 interface ProductDao {
 
-    @Query("SELECT * FROM product_database_tale")
-    fun getAllImages(): PagingSource<Int, Product>
+    @Query("SELECT * FROM product_database_table")
+    fun getAllProducts(): PagingSource<Int, Product>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addImages(images: List<Product>)
 
-    @Query("DELETE FROM product_database_tale WHERE id = :productId")
+    @Query("DELETE FROM product_database_table WHERE id = :productId")
     suspend fun deleteProductById(productId: Long)
 
 
