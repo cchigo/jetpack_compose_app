@@ -14,13 +14,12 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeTopBar(
 
-    itemCount: Pair<Double, Int>,
+    itemCount: Int,
     showLeftButton: Boolean = false,
     leftButton: (() -> Unit)? = null
 ) {
@@ -35,18 +34,14 @@ fun HomeTopBar(
                 Spacer(modifier = Modifier.weight(1f))
                 Text("Bundle List")
                 Spacer(modifier = Modifier.weight(1f))
-                BadgeItem(count = itemCount.second)
+                BadgeItem(count = itemCount)
             }
         },
         actions = {
         })
 }
 
-@Composable
-@Preview
-fun HomeTopBarPreview() {
-    // HomeTopBar(itemCount = 200) {}
-}
+
 
 @Composable
 fun toggleLeftIcon(showLeftButton: Boolean, leftButton: (() -> Unit)?) {

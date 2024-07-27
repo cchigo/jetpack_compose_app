@@ -22,17 +22,12 @@ import kotlinx.coroutines.delay
 @Composable
 fun MyButtonWithDialog(
     onDismissDialog: (() -> Unit)?,
-    buttonText: String,
+   // buttonText: String,
     dialogTitle: String,
     dialogText: String
 ) {
-    val showDialog = remember { mutableStateOf(false) }
+    val showDialog = remember { mutableStateOf(true) }
 
-    Button(onClick = {
-        showDialog.value = true
-    }) {
-        Text(buttonText)
-    }
 
     if (showDialog.value) {
         ShowDialog(

@@ -1,8 +1,8 @@
 package com.chichi.productlistapp.util
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import com.chichi.productlistapp.model.Product
+import com.chichi.productlistapp.ui.viewmodel.CartViewModel.CartItem
 import javax.inject.Inject
 
 class CartManager @Inject constructor() {
@@ -10,20 +10,20 @@ class CartManager @Inject constructor() {
     private val cartActions = mutableStateListOf<Product>()
 
     /** Adds product to cart, if it exist, updates `selectedQuantity`**/
-    fun addProductToCart(product: Product): Pair<Double, Int> {
+    fun addProductToCart(product: Product): CartItem {
         val index = cartActions.indexOfFirst { it.id == product.id }
         if (index != -1) {
             cartActions[index] = cartActions[index].copy(selectedQty = product.selectedQty)
         } else {
             cartActions.add(product.copy(selectedQty = product.selectedQty))
         }
-        return computeTotalAmount()
+        return CartItem(cartActions, computeTotalAmount())
     }
 
     /** Inserts product to cart, and, updates `selectedQuantity`**/
-    fun insertProduct(product: Product): Pair<Double, Int> {
+    fun insertProduct(product: Product): CartItem {
         cartActions.add(product.copy(selectedQty = product.selectedQty))
-        return computeTotalAmount()
+        return CartItem(cartActions, computeTotalAmount())
     }
 
     /** Removes product from cart,
@@ -31,7 +31,7 @@ class CartManager @Inject constructor() {
      * else , removes it from the list
      * **/
 
-    fun removeProduct(product: Product): Pair<Double, Int> {
+    fun removeProduct(product: Product): CartItem {
         val index = cartActions.indexOfFirst { it.id == product.id }
         if (index != -1) {
             val currentProduct = cartActions[index]
@@ -42,7 +42,7 @@ class CartManager @Inject constructor() {
                 cartActions.removeAt(index)
             }
         }
-        return computeTotalAmount()
+        return CartItem(cartActions, computeTotalAmount())
     }
 
     /** Calculate total amount and total selected quantity
@@ -59,13 +59,9 @@ class CartManager @Inject constructor() {
             totalQuantity += totalSelectedQuantity
         }
 
-        Log.d("TOTAL_AMOUNT_TAG", "computeTotalAmount: $totalAmount ::: $totalQuantity")
         return Pair(totalAmount, totalQuantity)
+
     }
-    private fun logCartActions() {
-        cartActions.forEach {
-            Log.d("CLICKTAG33", "Current Cart Actions: ${it.id} ?? ${it.name} // ${it.selectedQty}")
-        }
-    }
+
 
 }

@@ -1,7 +1,6 @@
 package com.chichi.productlistapp.util
 
 import ProductScreen
-import android.util.Log
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -16,11 +15,9 @@ import coil.annotation.ExperimentalCoilApi
 import com.chichi.productlistapp.Routes
 import com.chichi.productlistapp.screens.home.HomeScreen
 import com.chichi.productlistapp.ui.viewmodel.CartViewModel
+import com.chichi.productlistapp.ui.viewmodel.HomeViewModel
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
-
-class NavHost {
-}
 
 @OptIn(
     ExperimentalCoilApi::class, ExperimentalMaterial3Api::class, ExperimentalPagingApi::class,
@@ -30,7 +27,8 @@ class NavHost {
 fun MyAppNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    viewModel: CartViewModel
+    viewModel: CartViewModel,
+    homeViewModel: HomeViewModel
 
 ) {
     NavHost(
@@ -42,19 +40,23 @@ fun MyAppNavHost(
             HomeScreen(
                 onNavigateForward = { product ->
                     if (product != null) {
-                        navController.navigate(Routes.ProductScreen(customPrimitive = Json.encodeToString(product)))
+                        navController.navigate(
+                            Routes.ProductScreen(
+                                customPrimitive = Json.encodeToString(
+                                    product
+                                )
+                            )
+                        )
                     }
 
-                }, cartViewModel = viewModel
+                }, cartViewModel = viewModel, homeViewModel = homeViewModel
             )
         }
 
         composable<Routes.ProductScreen>(
 
-        ) {
-                navBackStackEntry ->
+        ) { navBackStackEntry ->
             val parameters = navBackStackEntry.toRoute<Routes.ProductScreen>()
-
             ProductScreen(
                 bundleString = parameters.customPrimitive.toString(),
 

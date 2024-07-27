@@ -28,8 +28,9 @@ class HomeViewModel @Inject constructor(
         getProducts()
     }
 
-    private fun getProducts() {
 
+
+     fun getProducts() {
         _state.update { it.copy(isLoading = true) }
 
         job?.cancel()

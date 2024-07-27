@@ -1,6 +1,6 @@
 package com.chichi.productlistapp.screens.home
 
-import android.util.Log
+
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -66,8 +66,8 @@ fun ProductBundleListScreen(
                             bundle = singleProduct,
 
                             onProductClick = {
+                                cartViewModel.findProductById(it.id)
                                 onNavigateForward?.invoke(it)
-                                Log.d("CLICK_TAG", "ProductBundleListScreen:${it.id} was clicked")
                             },
                             cartViewModel = cartViewModel
 
