@@ -40,7 +40,7 @@ class HomeViewModel @Inject constructor(
                     val result = res.get<List<Product>>()
                     _state.update {
                         it.copy(
-                            products = result ?: emptyList(), isLoading = false
+                            products = result ?: emptyList(), isLoading = false, error = null
                         )
                     }
                 }
@@ -50,12 +50,13 @@ class HomeViewModel @Inject constructor(
                         it.copy(
                             isLoading = false,
                             error = res.message,
+                            retry = { getProducts() }
                         )
                     }
                 }
 
                 else -> {
-                    _state.update { it.copy(isLoading = false) }
+                    _state.update { it.copy(isLoading = false, retry = { getProducts() }) }
                 }
             }
         }
