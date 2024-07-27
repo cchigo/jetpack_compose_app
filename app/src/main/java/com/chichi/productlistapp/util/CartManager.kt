@@ -1,8 +1,8 @@
 package com.chichi.productlistapp.util
 
 import androidx.compose.runtime.mutableStateListOf
+import com.chichi.productlistapp.model.CartItem
 import com.chichi.productlistapp.model.Product
-import com.chichi.productlistapp.ui.viewmodel.CartViewModel.CartItem
 import javax.inject.Inject
 
 class CartManager @Inject constructor() {
@@ -13,16 +13,20 @@ class CartManager @Inject constructor() {
     fun addProductToCart(product: Product): CartItem {
         val index = cartActions.indexOfFirst { it.id == product.id }
         if (index != -1) {
-            cartActions[index] = cartActions[index].copy(selectedQty = product.selectedQty)
+            cartActions[index] = cartActions[index].copy(selectedQty = product.selectedQty, selectedAmount = product.selectedAmount )
         } else {
-            cartActions.add(product.copy(selectedQty = product.selectedQty))
+            cartActions.add(product.copy(selectedQty = product.selectedQty, selectedAmount = product.selectedAmount ))
         }
         return CartItem(cartActions, computeTotalAmount())
     }
 
     /** Inserts product to cart, and, updates `selectedQuantity`**/
     fun insertProduct(product: Product): CartItem {
-        cartActions.add(product.copy(selectedQty = product.selectedQty))
+        val new = product.copy(
+            selectedQty = product.selectedQty,
+            selectedAmount = product.selectedAmount // w
+        )
+        cartActions.add(new)
         return CartItem(cartActions, computeTotalAmount())
     }
 
@@ -34,10 +38,9 @@ class CartManager @Inject constructor() {
     fun removeProduct(product: Product): CartItem {
         val index = cartActions.indexOfFirst { it.id == product.id }
         if (index != -1) {
-            val currentProduct = cartActions[index]
-            val updatedProduct = currentProduct.copy(selectedQty = currentProduct.selectedQty - 1)
-            if (updatedProduct.selectedQty > 0) {
-                cartActions[index] = updatedProduct
+
+            if (product.selectedQty > 0) {
+                cartActions[index] = product
             } else {
                 cartActions.removeAt(index)
             }
@@ -61,6 +64,10 @@ class CartManager @Inject constructor() {
 
         return Pair(totalAmount, totalQuantity)
 
+    }
+
+    fun clearCart(){
+        cartActions.clear()
     }
 
 

@@ -19,8 +19,6 @@ import androidx.compose.ui.unit.dp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BadgeItem(count: Int) {
-  //  var itemCount by remember { mutableStateOf(count) }
-
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {

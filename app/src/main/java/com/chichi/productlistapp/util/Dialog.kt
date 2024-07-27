@@ -22,7 +22,6 @@ import kotlinx.coroutines.delay
 @Composable
 fun MyButtonWithDialog(
     onDismissDialog: (() -> Unit)?,
-   // buttonText: String,
     dialogTitle: String,
     dialogText: String
 ) {

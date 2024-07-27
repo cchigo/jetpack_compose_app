@@ -37,11 +37,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.R
 import coil.compose.rememberImagePainter
+import com.chichi.productlistapp.model.CartItem
 import com.chichi.productlistapp.model.Product
 import com.chichi.productlistapp.screens.cart.AddToCartButtons
 import com.chichi.productlistapp.screens.home.HomeTopBar
 import com.chichi.productlistapp.ui.viewmodel.CartViewModel
-import com.chichi.productlistapp.ui.viewmodel.CartViewModel.CartItem
 import com.chichi.productlistapp.util.MyButtonWithDialog
 import kotlinx.serialization.json.Json
 
@@ -64,8 +64,8 @@ fun ProductScreen(
         HomeTopBar(showLeftButton = true,
             itemCount = cartState.total.second,
             leftButton = {
-            onNavigateBack?.invoke()
-        })
+                onNavigateBack?.invoke()
+            })
     }, content = { padding ->
         Column(
             modifier = Modifier
@@ -100,7 +100,7 @@ fun ProductScreen(
                                 horizontal = 8.dp, vertical = 4.dp
                             )
 
-                        , text = bundle.currencySymbol + bundle.price, style = TextStyle(
+                        , text = updatedProductById.value?.currencySymbol + updatedProductById.value?.price, style = TextStyle(
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
                             fontSize = MaterialTheme.typography.titleLarge.fontSize,
@@ -171,8 +171,8 @@ fun ProductScreen(
             if(cartState.products.isNotEmpty()){
                 Column(
                     modifier = Modifier.fillMaxWidth().align(Alignment.End)
-                    ) {
-                    Text(text = "Total:    ${bundle.currencySymbol}${cartState.total.first}")
+                ) {
+                    Text(text = "Total:    ${updatedProductById.value?.currencySymbol}${cartState.total.first}")
                     Text(text = "Item(s):     ${cartState.total.second}")
                 }
             }

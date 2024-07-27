@@ -8,14 +8,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,8 +27,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.chichi.productlistapp.R
 import com.chichi.productlistapp.model.Product
@@ -37,6 +39,7 @@ import com.chichi.productlistapp.util.CartActions.onMinusClicked
 import com.chichi.productlistapp.util.CartActions.onPlusClicked
 import com.chichi.productlistapp.util.CartActions.onQuantityChanged
 import com.chichi.productlistapp.util.CartActions.shouldExpand
+import com.chichi.productlistapp.util.CartManager
 import com.chichi.productlistapp.util.ClickActions
 
 @Composable
@@ -48,6 +51,7 @@ fun AddToCartButtons(
 
 ) {
     var quantityTextValue by remember { mutableStateOf(bundle.selectedQty.toString()) }
+    var amountTextValue by remember { mutableStateOf(bundle.selectedAmount.toString()) }
     var showError by remember { mutableStateOf(false) }
     var isExpanded by remember { mutableStateOf(bundle.selectedQty > 0) }
 
@@ -55,33 +59,51 @@ fun AddToCartButtons(
         isExpanded = shouldExpand(quantityTextValue)
     }
 
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(48.dp)
+            .wrapContentSize()
             .clickable(onClick = {
+
                 isExpanded = !isExpanded
-                if (isExpanded) {
-                    bundle.selectedQty += 1
-                    quantityTextValue = bundle.selectedQty.toString()
-                    cartViewModel.setProduct(clickActions = ClickActions.SET, product = bundle)
+                if (isExpanded && quantityTextValue.toInt() < 1) {
+                    val value = onPlusClicked(bundle,
+                        { quantityTextValue = it },
+                        { amountTextValue = it },
+                        { showError = it })
+                    cartViewModel.setProduct(clickActions = ClickActions.SET, product = value)
 
                 }
             })
-            .background(Color.Gray)
+
     ) {
-        Box(
-            modifier = Modifier
-                .height(48.dp)
-                .fillMaxWidth()
-                .background(
-                    shape = RoundedCornerShape(4.dp), color = Color.White
-                )
-                .align(Alignment.Center)
+        Column(
+
+
+            horizontalAlignment = Alignment.CenterHorizontally, // Center items horizontally
+            verticalArrangement = Arrangement.Center // Center items vertically
         ) {
-            if (isExpanded) {
-                Column {
+            Text(
+                text = if (amountTextValue.toInt() > 0) bundle.currencySymbol+ amountTextValue else "", // Replace with amountTextValue if needed
+                color = Color.Black,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .background(Color.White) // Set background color
+                    .padding(4.dp) // Optional, adds padding inside the Text
+                , style = TextStyle(
+                    color = Color.Black,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                )
+            )
+
+            Box(
+
+
+
+            ) {
+                if (isExpanded) {
+
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.Center,
@@ -90,15 +112,17 @@ fun AddToCartButtons(
                         // Minus Icon
                         IconButton(
                             onClick = {
-                                onMinusClicked(bundle,
-                                    { quantityTextValue = it },
-                                    { showError = it })
+                                onMinusClicked(bundle = bundle,
+                                    setQuantityTextValue = { quantityTextValue = it },
+                                    setShowError = { showError = it },
+                                    setAmountTextValue = { amountTextValue = it })
 
-                                cartViewModel.setProduct(clickActions = ClickActions.REMOVE, product = bundle)
 
-                            },
-                            enabled = isEnabled,
-                            modifier = Modifier
+                                cartViewModel.setProduct(
+                                    clickActions = ClickActions.REMOVE, product = bundle
+                                )
+
+                            }, enabled = isEnabled, modifier = Modifier
                                 .background(
                                     Color.Blue, shape = RoundedCornerShape(4.dp)
                                 )
@@ -117,15 +141,13 @@ fun AddToCartButtons(
                             maxLines = 1,
                             value = quantityTextValue,
                             onValueChange = { newValue ->
-                                onQuantityChanged(
-                                    newValue,
-                                    bundle,
-                                    { quantityTextValue = it },
-                                    { showError = it }
-                                )
+                                onQuantityChanged(newValue = newValue,
+                                    bundle = bundle,
+                                    setQuantityTextValue = { quantityTextValue = it },
+                                    setAmountTextValue = { amountTextValue = it },
+                                    setShowError = { showError = it })
 
                             },
-                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                             textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.Center),
                             singleLine = true,
                             enabled = !showError,
@@ -136,7 +158,6 @@ fun AddToCartButtons(
                                         alpha = 0.8f
                                     )
                                 )
-
                                 .padding(8.dp)
                                 .weight(1f)
                         )
@@ -144,11 +165,15 @@ fun AddToCartButtons(
                         // Plus Icon
                         IconButton(
                             onClick = {
-                                val pluss =onPlusClicked(bundle,
+                                val pluss = onPlusClicked(bundle,
                                     { quantityTextValue = it },
+                                    { amountTextValue = it },
                                     { showError = it })
 
-                                cartViewModel.setProduct(clickActions = ClickActions.UPDATE, product = bundle)
+
+                                cartViewModel.setProduct(
+                                    clickActions = ClickActions.UPDATE, product = bundle
+                                )
 
                                 Log.d("PLUS_TAG", "AddToCartButtons: $pluss")
                                 //cartViewModel.addProductToCart(clickActions = ClickActions.UPDATE, product = bundle)
@@ -164,24 +189,38 @@ fun AddToCartButtons(
                                 tint = Color.White
                             )
                         }
+
                     }
+                } else {
+                    Text(
+                        text = "Add to Cart",
+                        color = Color.Black,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.Center)
+                            .background(Color.Yellow)
+                            .padding(8.dp)
+                    )
                 }
-            } else {
-                Text(
-                    text = "Add to Cart",
-                    color = Color.Black,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.Center)
-                        .background(Color.Yellow)
-                        .padding(8.dp)
-                )
             }
+
         }
+
+
     }
 }
 
+@Preview
+@Composable
+fun showPreview() {
+    AddToCartButtons(
+        emptyList(), Product(
+            0, "", "", "", "", "", 0, 0, "", 0, 0
+        ), cartViewModel = CartViewModel(CartManager())
+
+    )
+}
 
 
 //todo: add element, shared transition

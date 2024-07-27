@@ -22,16 +22,7 @@ data class Product(
     val quantity: Int? = 0,
     val status: String? = null,
     var selectedQty: Int = 0,
+    var selectedAmount: Int = 0,
 
-) : Parcelable {
-
-
-    fun updateQuantity(qty: Int) {
-        selectedQty = if (qty > quantity!!)
-           quantity
-        else
-            qty
-    }
-
-}
+    ) : Parcelable
 
