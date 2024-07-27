@@ -1,13 +1,14 @@
-
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -32,9 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.R
 import coil.compose.rememberImagePainter
@@ -43,7 +42,6 @@ import com.chichi.productlistapp.screens.cart.AddToCartButtons
 import com.chichi.productlistapp.screens.home.HomeTopBar
 import com.chichi.productlistapp.ui.viewmodel.CartViewModel
 import com.chichi.productlistapp.ui.viewmodel.CartViewModel.CartItem
-import com.chichi.productlistapp.util.CartManager
 import com.chichi.productlistapp.util.MyButtonWithDialog
 import kotlinx.serialization.json.Json
 
@@ -57,51 +55,78 @@ fun ProductScreen(
 ) {
 
     val cartState by cartViewModel.cartEntityList.collectAsState()
+    val bundle: Product = Json.decodeFromString(bundleString)
     val productList = cartViewModel.products.collectAsState()
     val updatedProductById = cartViewModel.selectedProduct.collectAsState()
 
-   Scaffold(topBar = {
-        HomeTopBar(
-            showLeftButton = true,
+
+    Scaffold(topBar = {
+        HomeTopBar(showLeftButton = true,
             itemCount = cartState.total.second,
             leftButton = {
-                onNavigateBack?.invoke()
-            }
-        )
+            onNavigateBack?.invoke()
+        })
     }, content = { padding ->
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(0.dp), // No spacing between items
+            verticalArrangement = Arrangement.spacedBy(0.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Card(
                 modifier = Modifier
                     .padding(padding)
-
                     .wrapContentHeight(),
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
             ) {
-                Column(
-                    Modifier
+
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .aspectRatio(2f / 1f)
                         .background(Color.White)
-                        .wrapContentHeight()
                 ) {
-                    val painter = rememberImagePainter(
-                        data = updatedProductById.value?.imageLocation,
-                        builder = {
-                            placeholder(R.drawable.notification_template_icon_bg)
-                            error(R.drawable.notification_template_icon_bg)
-                            crossfade(1000)
-                        }
+                    Text(
+                        modifier = Modifier
+                            .wrapContentSize()
+                            .align(Alignment.TopEnd)
+                            .background(
+                                Color.Red, shape = RoundedCornerShape(
+                                    topStart = 8.dp, bottomStart = 8.dp
+                                )
+                            )
+                            .padding(
+                                horizontal = 8.dp, vertical = 4.dp
+                            )
+
+                        , text = bundle.currencySymbol + bundle.price, style = TextStyle(
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                        )
+
                     )
+
+                    val painter =
+                        rememberImagePainter(data = updatedProductById.value?.imageLocation,
+                            builder = {
+                                placeholder(R.drawable.notification_template_icon_bg)
+                                error(R.drawable.notification_template_icon_bg)
+                                crossfade(1000)
+                            })
                     Image(
                         painter = painter,
                         contentDescription = "Image",
                         modifier = Modifier.aspectRatio(12f / 6f),
                         contentScale = ContentScale.Fit
                     )
+
+
+                }
+                Column(modifier = Modifier.background(Color.White)) {
+
+
                     Text(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -122,46 +147,35 @@ fun ProductScreen(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-                    Text(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
-                            .padding(2.dp),
-                        text = updatedProductById.value?.currencySymbol + updatedProductById.value?.price,
-                        style = TextStyle(
-                            fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                            fontWeight = FontWeight.Normal,
-                            textAlign = TextAlign.Center,
-                            color = MaterialTheme.colorScheme.onBackground
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
 
 
-                    Column(
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(2.dp)
-                    ) {
-                        if (productList != null) {
-                            updatedProductById.value?.let {
-                                AddToCartButtons(
-                                    bundleList = productList.value,
-                                    bundle = it,
-                                    cartViewModel = cartViewModel
-                                )
-                            }
+                    if (productList != null) {
+                        updatedProductById.value?.let {
+                            AddToCartButtons(
+                                bundleList = productList.value,
+                                bundle = it,
+                                cartViewModel = cartViewModel
+                            )
                         }
                     }
+
+
                 }
 
-                MyButtonWithDialogScreen(
-                    cartState = cartState,
-                    cartViewModel = cartViewModel,
-                    onNavigateBack = { onNavigateBack?.invoke() })
+
             }
 
+            MyButtonWithDialogScreen(cartState = cartState,
+                cartViewModel = cartViewModel,
+                onNavigateBack = { onNavigateBack?.invoke() })
+            if(cartState.products.isNotEmpty()){
+                Column(
+                    modifier = Modifier.fillMaxWidth().align(Alignment.End)
+                    ) {
+                    Text(text = "Total:    ${bundle.currencySymbol}${cartState.total.first}")
+                    Text(text = "Item(s):     ${cartState.total.second}")
+                }
+            }
 
         }
 
@@ -172,15 +186,14 @@ fun ProductScreen(
 
 @Composable
 fun MyButtonWithDialogScreen(
-    cartState: CartItem,
-    onNavigateBack: (() -> Unit)? = null,
-    cartViewModel: CartViewModel
+    cartState: CartItem, onNavigateBack: (() -> Unit)? = null, cartViewModel: CartViewModel
 ) {
     var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Button(
         onClick = {
+
             if (cartState.products.isEmpty()) {
                 Toast.makeText(context, "Please add to cart to proceed", Toast.LENGTH_SHORT).show()
             } else {
@@ -189,34 +202,28 @@ fun MyButtonWithDialogScreen(
         },
         shape = RoundedCornerShape(8.dp),
         colors = ButtonDefaults.buttonColors(
-            contentColor = Color.White,
-            disabledContentColor = Color.Green
+            contentColor = Color.White, disabledContentColor = Color.Green
         ),
         modifier = Modifier
             .fillMaxWidth()
             .padding(horizontal = 0.dp, vertical = 4.dp)
-            .alpha(if (showDialog) 0.5f else 1.0f)
-            .background(color = if (showDialog) Color.DarkGray else Color.Red),
+            .alpha(if (showDialog) 0.5f else 1.0f),
         enabled = !showDialog
     ) {
-        // Empty content block
         Text(text = "Buy now")
     }
 
-    if(showDialog) {
+    if (showDialog) {
 
         MyButtonWithDialog(
             onDismissDialog = {
                 cartViewModel.buyNow()
                 onNavigateBack?.invoke()
             },
-            dialogTitle = "Transaction successful!",
-            dialogText = "Continue shopping."
+            dialogTitle = "Transaction successful!", dialogText = "Continue shopping."
         )
     }
 }
-
-
 
 
 
