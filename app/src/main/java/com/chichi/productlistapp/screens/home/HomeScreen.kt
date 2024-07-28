@@ -35,6 +35,7 @@ fun HomeScreen(
     val state by homeViewModel.state.collectAsState()
     val  cartState = cartViewModel.cartEntityList.collectAsState()
 
+
     Scaffold(topBar = {
         HomeTopBar( itemCount = cartState.value.total.second)
 
@@ -47,3 +48,4 @@ fun HomeScreen(
     }
     )
 }
+
