@@ -1,4 +1,4 @@
-package com.chichi.productlistapp.screens.home
+package com.chichi.productlistapp.ui.screens.product
 
 
 import androidx.compose.foundation.layout.Arrangement
@@ -25,7 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import com.chichi.productlistapp.model.Product
-import com.chichi.productlistapp.screens.cart.SingleProductView
+import com.chichi.productlistapp.ui.screens.cart.SingleProductView
 import com.chichi.productlistapp.ui.viewmodel.CartViewModel
 import com.chichi.productlistapp.ui.viewmodel.ProductListState
 

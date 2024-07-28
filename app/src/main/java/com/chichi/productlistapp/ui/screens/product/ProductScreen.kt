@@ -39,8 +39,8 @@ import androidx.core.R
 import coil.compose.rememberImagePainter
 import com.chichi.productlistapp.model.CartItem
 import com.chichi.productlistapp.model.Product
-import com.chichi.productlistapp.screens.cart.AddToCartButtons
-import com.chichi.productlistapp.screens.home.HomeTopBar
+import com.chichi.productlistapp.ui.screens.cart.AddToCartButtons
+import com.chichi.productlistapp.ui.screens.home.HomeTopBar
 import com.chichi.productlistapp.ui.viewmodel.CartViewModel
 import com.chichi.productlistapp.util.MyButtonWithDialog
 import kotlinx.serialization.json.Json

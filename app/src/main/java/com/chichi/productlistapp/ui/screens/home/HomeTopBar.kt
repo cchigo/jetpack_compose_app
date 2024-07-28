@@ -1,4 +1,4 @@
-package com.chichi.productlistapp.screens.home
+package com.chichi.productlistapp.ui.screens.home
 
 import android.util.Log
 import androidx.compose.foundation.layout.Row

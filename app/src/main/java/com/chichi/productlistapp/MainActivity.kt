@@ -9,7 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import com.chichi.productlistapp.ui.theme.ProductListAppTheme
 import com.chichi.productlistapp.ui.viewmodel.CartViewModel
 import com.chichi.productlistapp.ui.viewmodel.HomeViewModel
-import com.chichi.productlistapp.util.MyAppNavHost
+import com.chichi.productlistapp.navigation.AppNavHost
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -24,7 +24,7 @@ class MainActivity : ComponentActivity() {
 
             ProductListAppTheme {
                 val navController = rememberNavController()
-                MyAppNavHost(
+                AppNavHost(
                     navController = navController, viewModel = cartViewModel, homeViewModel = homeViewModel
                 )
             }
@@ -33,18 +33,6 @@ class MainActivity : ComponentActivity() {
 
 }
 
-
-
-
-@kotlinx.serialization.Serializable
-sealed class Routes {
-    @kotlinx.serialization.Serializable
-    data object HomeScreen : Routes()
-
-    @kotlinx.serialization.Serializable
-    data class ProductScreen(val customPrimitive: String) : Routes()
-
-}
 
 
 

@@ -1,4 +1,4 @@
-package com.chichi.productlistapp.screens.cart
+package com.chichi.productlistapp.ui.screens.cart
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

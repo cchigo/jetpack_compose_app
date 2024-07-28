@@ -1,4 +1,4 @@
-package com.chichi.productlistapp.screens.home
+package com.chichi.productlistapp.ui.screens.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -10,6 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import coil.annotation.ExperimentalCoilApi
 import com.chichi.productlistapp.model.Product
+import com.chichi.productlistapp.ui.screens.product.ProductBundleListScreen
 import com.chichi.productlistapp.ui.viewmodel.CartViewModel
 import com.chichi.productlistapp.ui.viewmodel.HomeViewModel
 

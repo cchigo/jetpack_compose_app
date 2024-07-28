@@ -1,4 +1,4 @@
-package com.chichi.productlistapp.screens.home
+package com.chichi.productlistapp.ui.screens.home
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
