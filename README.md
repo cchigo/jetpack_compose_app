@@ -23,6 +23,23 @@
 - **UI Framework:** Jetpack Compose
 - **Architecture:** MVVM (Model-View-ViewModel)
 - **Dependency Injection:** Hilt
+- **Plugins**: Secrets Gradle Plugin
+- **Networking**:
+  - Retrofit
+  - Gson
+  - OkHttp
+- - **Dependency Injection**:
+  - Dagger Hilt
+  - Hilt Navigation Compose
+- **Plugins**:
+- Android Application Plugin
+- Kotlin Android Plugin
+- Kotlin KAPT Plugin
+- Dagger Hilt Plugin
+- Kotlin Serialization Plugin
+- Kotlin Parcelize Plugin
+- Secrets Gradle Plugin
+
 
 ## Architecture
 
