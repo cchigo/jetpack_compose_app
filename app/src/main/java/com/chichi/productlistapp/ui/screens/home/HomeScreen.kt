@@ -9,6 +9,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import coil.annotation.ExperimentalCoilApi
+import com.chichi.productlistapp.BuildConfig
 import com.chichi.productlistapp.model.Product
 import com.chichi.productlistapp.ui.screens.product.ProductBundleListScreen
 import com.chichi.productlistapp.ui.viewmodel.CartViewModel
@@ -35,7 +36,6 @@ fun HomeScreen(
 
     val state by homeViewModel.state.collectAsState()
     val  cartState = cartViewModel.cartEntityList.collectAsState()
-
 
     Scaffold(topBar = {
         HomeTopBar( itemCount = cartState.value.total.second)
