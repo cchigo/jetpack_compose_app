@@ -1,6 +1,5 @@
-package com.chichi.productlistapp.ui.home
+package com.chichi.productlistapp.ui.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.chichi.productlistapp.data.remote.BaseWrapper
@@ -9,10 +8,8 @@ import com.chichi.productlistapp.data.remote.repository.RepositoryImpl
 import com.chichi.productlistapp.model.Product
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -31,8 +28,9 @@ class HomeViewModel @Inject constructor(
         getProducts()
     }
 
-    private fun getProducts() {
 
+
+     fun getProducts() {
         _state.update { it.copy(isLoading = true) }
 
         job?.cancel()
@@ -42,7 +40,7 @@ class HomeViewModel @Inject constructor(
                     val result = res.get<List<Product>>()
                     _state.update {
                         it.copy(
-                            products = result ?: emptyList(), isLoading = false
+                            products = result ?: emptyList(), isLoading = false, error = null
                         )
                     }
                 }
@@ -52,16 +50,18 @@ class HomeViewModel @Inject constructor(
                         it.copy(
                             isLoading = false,
                             error = res.message,
+                            retry = { getProducts() }
                         )
                     }
                 }
 
                 else -> {
-                    _state.update { it.copy(isLoading = false) }
+                    _state.update { it.copy(isLoading = false, retry = { getProducts() }) }
                 }
             }
         }
     }
+
 }
 
 

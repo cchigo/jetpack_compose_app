@@ -1,8 +1,7 @@
 package com.chichi.productlistapp.util
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
+import com.chichi.productlistapp.model.CartItem
 import com.chichi.productlistapp.model.Product
 import javax.inject.Inject
 
@@ -11,22 +10,24 @@ class CartManager @Inject constructor() {
     private val cartActions = mutableStateListOf<Product>()
 
     /** Adds product to cart, if it exist, updates `selectedQuantity`**/
-    fun addProductToCart(product: Product): SnapshotStateList<Product> {
+    fun addProductToCart(product: Product): CartItem {
         val index = cartActions.indexOfFirst { it.id == product.id }
         if (index != -1) {
-            cartActions[index] = cartActions[index].copy(selectedQty = product.selectedQty)
+            cartActions[index] = cartActions[index].copy(selectedQty = product.selectedQty, selectedAmount = product.selectedAmount )
         } else {
-            cartActions.add(product.copy(selectedQty = product.selectedQty))
+            cartActions.add(product.copy(selectedQty = product.selectedQty, selectedAmount = product.selectedAmount ))
         }
-        computeTotalAmount()
-        return cartActions
+        return CartItem(cartActions, computeTotalAmount())
     }
 
     /** Inserts product to cart, and, updates `selectedQuantity`**/
-    fun insertProduct(product: Product): SnapshotStateList<Product> {
-        cartActions.add(product.copy(selectedQty = product.selectedQty))
-        computeTotalAmount()
-        return cartActions
+    fun insertProduct(product: Product): CartItem {
+        val new = product.copy(
+            selectedQty = product.selectedQty,
+            selectedAmount = product.selectedAmount // w
+        )
+        cartActions.add(new)
+        return CartItem(cartActions, computeTotalAmount())
     }
 
     /** Removes product from cart,
@@ -34,22 +35,20 @@ class CartManager @Inject constructor() {
      * else , removes it from the list
      * **/
 
-    fun removeProduct(product: Product): SnapshotStateList<Product> {
+    fun removeProduct(product: Product): CartItem {
         val index = cartActions.indexOfFirst { it.id == product.id }
         if (index != -1) {
-            val currentProduct = cartActions[index]
-            val updatedProduct = currentProduct.copy(selectedQty = currentProduct.selectedQty - 1)
-            if (updatedProduct.selectedQty > 0) {
-                cartActions[index] = updatedProduct
+
+            if (product.selectedQty > 0) {
+                cartActions[index] = product
             } else {
                 cartActions.removeAt(index)
             }
         }
-        computeTotalAmount()
-        return cartActions
+        return CartItem(cartActions, computeTotalAmount())
     }
 
-    /** Calculate total amaount and total selected quantity
+    /** Calculate total amount and total selected quantity
      * **/
     private fun computeTotalAmount(): Pair<Double, Int> {
         var totalAmount = 0.0
@@ -63,13 +62,13 @@ class CartManager @Inject constructor() {
             totalQuantity += totalSelectedQuantity
         }
 
-        Log.d("TOTAL_AMOUNT_TAG", "computeTotalAmount: $totalAmount ::: $totalQuantity")
         return Pair(totalAmount, totalQuantity)
+
     }
-    private fun logCartActions() {
-        cartActions.forEach {
-            Log.d("CLICKTAG33", "Current Cart Actions: ${it.id} ?? ${it.name} // ${it.selectedQty}")
-        }
+
+    fun clearCart(){
+        cartActions.clear()
     }
+
 
 }
